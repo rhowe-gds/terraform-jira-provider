@@ -4,6 +4,7 @@ import (
   "encoding/json"
 
   "github.com/hashicorp/terraform/helper/schema"
+  "github.com/hashicorp/terraform/helper/validation"
 
   jira "gopkg.in/andygrunwald/go-jira.v1"
 )
@@ -16,6 +17,12 @@ func resourceProject() *schema.Resource {
     Delete: resourceProjectDelete,
 
     Schema: map[string]*schema.Schema{
+      "assignee_type": &schema.Schema{
+        Type:         schema.TypeString,
+        Optional:     true,
+        Default:      "UNASSIGNED",
+        ValidateFunc: validation.StringInSlice([]string{"PROJECT_LEAD", "UNASSIGNED"}, false),
+      },
       "description": &schema.Schema{
         Type:     schema.TypeString,
         Optional: true,
@@ -37,10 +44,11 @@ func resourceProject() *schema.Resource {
 }
 
 type Project struct {
-  Description string `json:"description"`
-  Email       string `json:"email"`
-  Key         string `json:"key"`
-  Name        string `json:"name"`
+  AssigneeType string `json:"assigneeType"`
+  Description  string `json:"description"`
+  Email        string `json:"email"`
+  Key          string `json:"key"`
+  Name         string `json:"name"`
 }
 
 func resourceProjectCreate(d *schema.ResourceData, m interface{}) error {
@@ -50,6 +58,7 @@ func resourceProjectCreate(d *schema.ResourceData, m interface{}) error {
   client := m.(*jira.Client)
 
   new_project := Project{
+    AssigneeType: d.Get("assignee_type").(string),
     Description: d.Get("description").(string),
     Email: d.Get("email").(string),
     Key: key,
@@ -82,6 +91,7 @@ func resourceProjectRead(d *schema.ResourceData, m interface{}) error {
     return err
   }
 
+  d.Set("assignee_type", project.AssigneeType)
   d.Set("description", project.Description)
   d.Set("email", project.Email)
   d.Set("key", project.Key)
