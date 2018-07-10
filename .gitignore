@@ -1,0 +1,8 @@
+*.backup
+*.orig
+*.plan
+*.swp
+*.tfstate
+.terraform
+/terraform-provider-jira
+crash.log
