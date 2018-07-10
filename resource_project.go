@@ -39,6 +39,10 @@ func resourceProject() *schema.Resource {
         Type:     schema.TypeString,
         Required: true,
       },
+      "url": &schema.Schema{
+        Type:     schema.TypeString,
+        Optional: true,
+      },
     },
   }
 }
@@ -49,6 +53,7 @@ type Project struct {
   Email        string `json:"email"`
   Key          string `json:"key"`
   Name         string `json:"name"`
+  URL          string `json:"url"`
 }
 
 func resourceProjectCreate(d *schema.ResourceData, m interface{}) error {
@@ -63,6 +68,7 @@ func resourceProjectCreate(d *schema.ResourceData, m interface{}) error {
     Email: d.Get("email").(string),
     Key: key,
     Name: d.Get("name").(string),
+    URL: d.Get("url").(string),
   }
 
   // Project creation is not implemented by go-jira
@@ -96,6 +102,7 @@ func resourceProjectRead(d *schema.ResourceData, m interface{}) error {
   d.Set("email", project.Email)
   d.Set("key", project.Key)
   d.Set("name", project.Name)
+  d.Set("url", project.URL)
 
   return nil
 }
