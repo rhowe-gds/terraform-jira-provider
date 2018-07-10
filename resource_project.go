@@ -80,6 +80,8 @@ func resourceProjectCreate(d *schema.ResourceData, m interface{}) error {
 
   client.NewRequest("POST", "rest/api/2/project", j)
 
+  // TODO: Check it worked
+
   return nil
 }
 
@@ -112,5 +114,13 @@ func resourceProjectUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceProjectDelete(d *schema.ResourceData, m interface{}) error {
+  key := d.Get("key").(string)
+
+  client := m.(*jira.Client)
+
+  client.NewRequest("DELETE", "rest/api/2/project/" + key, nil)
+
+  // TODO: Check it worked
+
   return nil
 }
